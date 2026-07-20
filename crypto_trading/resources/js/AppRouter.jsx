@@ -5,9 +5,9 @@ import {
 } from 'react-router-dom';
 
 import Home from './Pages/Home';
-// import AdminLogin from './Pages/Admin/AdminLogin';
-// import Dashboard from './Pages/Admin/Dashboard';
-// import NotFound from './Pages/NotFound';
+import AdminLogin from './Pages/Admin/AdminLogin';
+import Dashboard from './Pages/Admin/Dashboard';
+import NotFound from './Pages/NotFound';
 
 function ProtectedRoute({ children }) {
     const accessToken =

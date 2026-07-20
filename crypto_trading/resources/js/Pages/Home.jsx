@@ -30,7 +30,9 @@ export default function Home() {
                         </h2>
                     </div>
                 </section>
-            </main>
+            </]">
+                            Build the correct trading foundation.
+main>
         </PublicLayout>
     );
 }

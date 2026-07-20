@@ -6,8 +6,7 @@ import {
 
 import Home from './Pages/Home';
 // import AdminLogin from './Pages/Admin/AdminLogin';
-// import Dashboard from './Pages/Admin/Dashboard';
-// import NotFound from './Pages/NotFound';
+
 
 function ProtectedRoute({ children }) {
     const accessToken =
@@ -33,24 +32,7 @@ export default function AppRouter() {
                 element={<Home />}
             />
 
-            <Route
-                path="/admin/login"
-                element={<AdminLogin />}
-            />
-
-            <Route
-                path="/admin"
-                element={
-                    <ProtectedRoute>
-                        <Dashboard />
-                    </ProtectedRoute>
-                }
-            />
-
-            <Route
-                path="*"
-                element={<NotFound />}
-            />
+          
         </Routes>
     );
 }

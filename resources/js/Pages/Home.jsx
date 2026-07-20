@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import PublicLayout from '../Layouts/PublicLayout';
 import HeroSection from '../Components/Home/HeroSection';
-import BenefitsStrip from '../Components/Home/BenefitsStrip';
+// import BenefitsStrip from '../Components/Home/BenefitsStrip';
 
 export default function Home() {
     useEffect(() => {
@@ -14,7 +14,8 @@ export default function Home() {
         <PublicLayout>
             <main>
                 <HeroSection />
-                <BenefitsStrip />
+
+             
 
                 <section
                     id="learn"
@@ -27,6 +28,39 @@ export default function Home() {
 
                         <h2 className="mt-4 text-4xl font-black text-[#0B2C5D]">
                             Build the correct trading foundation.
+                        </h2>
+                    </div>
+                </section>
+
+                <section
+                    id="trainers"
+                    className="scroll-mt-28 bg-white py-24"
+                >
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-4xl font-black text-[#0B2C5D]">
+                            Meet the Trainers
+                        </h2>
+                    </div>
+                </section>
+
+                <section
+                    id="register"
+                    className="scroll-mt-28 bg-slate-50 py-24"
+                >
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-4xl font-black text-[#0B2C5D]">
+                            Register Now
+                        </h2>
+                    </div>
+                </section>
+
+                <section
+                    id="faq"
+                    className="scroll-mt-28 bg-white py-24"
+                >
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-4xl font-black text-[#0B2C5D]">
+                            Frequently Asked Questions
                         </h2>
                     </div>
                 </section>

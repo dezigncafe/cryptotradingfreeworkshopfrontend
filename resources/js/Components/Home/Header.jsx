@@ -71,7 +71,7 @@ function scrollToSection(sectionId) {
     });
 }
 
-export default function Header() {
+export default function Header({ workshop }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const location = useLocation();
 
@@ -91,9 +91,15 @@ export default function Header() {
         setMenuOpen(false);
     };
 
+    const ctaLabel =
+        workshop?.ctaLabel || 'Reserve Your Seat';
+
+    const canRegister =
+        workshop?.canRegister ?? true;
+
     return (
         <>
-            <AnnouncementBar />
+            <AnnouncementBar workshop={workshop} />
 
             <header className="sticky top-0 z-50 border-b border-white/10 bg-[#061D42]/95 text-white shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-lg">
                 <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -151,25 +157,29 @@ export default function Header() {
                         ))}
                     </nav>
 
-                    <div className="hidden lg:block">
-                        <a
-                            href="#register"
-                            onClick={(event) =>
-                                handleAnchorClick(
-                                    event,
-                                    '#register',
-                                )
-                            }
-                            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F5B400] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#071F42] shadow-[0_8px_24px_rgba(245,180,0,0.24)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#ffca27]"
-                        >
-                            Reserve Your Seat
-                        </a>
-                    </div>
+                    {canRegister && (
+                        <div className="hidden lg:block">
+                            <a
+                                href="#register"
+                                onClick={(event) =>
+                                    handleAnchorClick(
+                                        event,
+                                        '#register',
+                                    )
+                                }
+                                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F5B400] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#071F42] shadow-[0_8px_24px_rgba(245,180,0,0.24)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#ffca27]"
+                            >
+                                {ctaLabel}
+                            </a>
+                        </div>
+                    )}
 
                     <button
                         type="button"
                         onClick={() =>
-                            setMenuOpen((current) => !current)
+                            setMenuOpen(
+                                (current) => !current,
+                            )
                         }
                         className="grid h-11 w-11 place-items-center rounded-lg border border-white/15 bg-white/5 text-white transition hover:border-[#F5B400]/50 hover:text-[#F5B400] lg:hidden"
                         aria-label="Toggle navigation menu"
@@ -202,18 +212,20 @@ export default function Header() {
                                 </a>
                             ))}
 
-                            <a
-                                href="#register"
-                                onClick={(event) =>
-                                    handleAnchorClick(
-                                        event,
-                                        '#register',
-                                    )
-                                }
-                                className="mt-3 flex min-h-12 items-center justify-center rounded-lg bg-[#F5B400] px-5 py-3 text-center text-sm font-black uppercase text-[#071F42]"
-                            >
-                                Reserve Your Seat
-                            </a>
+                            {canRegister && (
+                                <a
+                                    href="#register"
+                                    onClick={(event) =>
+                                        handleAnchorClick(
+                                            event,
+                                            '#register',
+                                        )
+                                    }
+                                    className="mt-3 flex min-h-12 items-center justify-center rounded-lg bg-[#F5B400] px-5 py-3 text-center text-sm font-black uppercase text-[#071F42]"
+                                >
+                                    {ctaLabel}
+                                </a>
+                            )}
                         </nav>
                     </div>
                 )}

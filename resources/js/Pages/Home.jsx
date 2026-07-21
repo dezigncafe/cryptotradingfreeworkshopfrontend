@@ -1,69 +1,97 @@
-import { useEffect } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 
 import PublicLayout from '../Layouts/PublicLayout';
 import HeroSection from '../Components/Home/HeroSection';
-// import BenefitsStrip from '../Components/Home/BenefitsStrip';
+import BenefitsStrip from '../Components/Home/BenefitsStrip';
+import AboutSection from '../Components/Home/AboutSection';
+import LearnSection from '../Components/Home/LearnSection';
+import TrainersSection from '../Components/Home/TrainersSection';
+import MetricsSection from '../Components/Home/MetricsSection';
+import CommunitySection from '../Components/Home/CommunitySection';
+import RegistrationSection from '../Components/Home/RegistrationSection';
+import FaqSection from '../Components/Home/FaqSection';
+import FinalCtaSection from '../Components/Home/FinalCtaSection';
+import api from '../services/api';
 
 export default function Home() {
+    const [workshop, setWorkshop] =
+        useState(null);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState('');
+
+    const loadWorkshop = useCallback(
+        async () => {
+            setLoading(true);
+            setError('');
+
+            try {
+                const response = await api.get(
+                    '/featured-workshop',
+                );
+
+                setWorkshop(
+                    response.data.data,
+                );
+            } catch (requestError) {
+                setWorkshop(null);
+
+                setError(
+                    requestError.response?.data
+                        ?.message ||
+                        'Unable to load workshop information.',
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
+        [],
+    );
+
     useEffect(() => {
         document.title =
             'Crypto Trading Free Workshop';
-    }, []);
+
+        loadWorkshop();
+    }, [loadWorkshop]);
 
     return (
-        <PublicLayout>
+        <PublicLayout workshop={workshop}>
             <main>
-                <HeroSection />
-
-             
-
-                <section
-                    id="learn"
-                    className="scroll-mt-28 bg-slate-50 py-24"
-                >
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <p className="font-bold uppercase tracking-widest text-amber-600">
-                            What You Will Learn
-                        </p>
-
-                        <h2 className="mt-4 text-4xl font-black text-[#0B2C5D]">
-                            Build the correct trading foundation.
-                        </h2>
+                {error && (
+                    <div className="bg-red-50 px-4 py-3 text-center text-sm font-semibold text-red-700">
+                        {error}
                     </div>
-                </section>
+                )}
 
-                <section
-                    id="trainers"
-                    className="scroll-mt-28 bg-white py-24"
-                >
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl font-black text-[#0B2C5D]">
-                            Meet the Trainers
-                        </h2>
-                    </div>
-                </section>
+                <HeroSection
+                    workshop={workshop}
+                    loading={loading}
+                />
 
-                <section
-                    id="register"
-                    className="scroll-mt-28 bg-slate-50 py-24"
-                >
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl font-black text-[#0B2C5D]">
-                            Register Now
-                        </h2>
-                    </div>
-                </section>
+                <BenefitsStrip />
+                <AboutSection />
+                <LearnSection />
+                <TrainersSection />
+                <MetricsSection />
+                <CommunitySection />
 
-                <section
-                    id="faq"
-                    className="scroll-mt-28 bg-white py-24"
-                >
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl font-black text-[#0B2C5D]">
-                            Frequently Asked Questions
-                        </h2>
-                    </div>
-                </section>
+                <RegistrationSection
+                    workshop={workshop}
+                    onRegistered={
+                        loadWorkshop
+                    }
+                />
+
+                <FaqSection />
+                <FinalCtaSection />
             </main>
         </PublicLayout>
     );

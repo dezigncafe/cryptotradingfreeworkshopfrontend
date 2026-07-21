@@ -1,14 +1,17 @@
 import Header from '../Components/Home/Header';
-// import Footer from '../Components/Home/Footer';
+import Footer from '../Components/Home/Footer';
 
-export default function PublicLayout({ children }) {
+export default function PublicLayout({
+    children,
+    workshop,
+}) {
     return (
         <div className="min-h-screen bg-white">
-            <Header />
+            <Header workshop={workshop} />
 
             {children}
 
-           
+            <Footer />
         </div>
     );
 }

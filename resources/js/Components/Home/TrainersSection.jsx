@@ -484,52 +484,55 @@ function TrainerSocialLinks({
     reduceMotion,
 }) {
     const links = [
-    {
-        href:
-            trainer.linkedin_url,
+        {
+            href:
+                trainer.linkedin_url,
 
-        label:
-            'LinkedIn',
+            label:
+                'LinkedIn',
 
-        icon:
-            ExternalLink,
+            shortLabel:
+                'in',
 
-        className:
-            'bg-[#0A66C2]',
-    },
+            className:
+                'bg-[#0A66C2]',
+        },
 
-    {
-        href:
-            trainer.youtube_url,
+        {
+            href:
+                trainer.youtube_url,
 
-        label:
-            'YouTube',
+            label:
+                'YouTube',
 
-        icon:
-            Play,
+            shortLabel:
+                'YT',
 
-        className:
-            'bg-red-600',
-    },
+            className:
+                'bg-red-600',
+        },
 
-    {
-        href:
-            trainer.facebook_url,
+        {
+            href:
+                trainer.facebook_url,
 
-        label:
-            'Facebook',
+            label:
+                'Facebook',
 
-        icon:
-            Globe2,
+            shortLabel:
+                'f',
 
-        className:
-            'bg-blue-700',
-    },
-].filter(
-    (link) =>
-        Boolean(link.href),
-);
-    if (links.length === 0) {
+            className:
+                'bg-blue-700',
+        },
+    ].filter(
+        (link) =>
+            Boolean(link.href),
+    );
+
+    if (
+        links.length === 0
+    ) {
         return null;
     }
 
@@ -539,7 +542,7 @@ function TrainerSocialLinks({
                 ({
                     href,
                     label,
-                    icon: Icon,
+                    shortLabel,
                     className,
                 }) => (
                     <motion.a
@@ -568,9 +571,11 @@ function TrainerSocialLinks({
                         whileTap={{
                             scale: 0.92,
                         }}
-                        className={`grid h-9 w-9 place-items-center rounded-full text-white shadow-md ${className}`}
+                        className={`grid h-9 min-w-9 place-items-center rounded-full px-2 text-xs font-black text-white shadow-md ${className}`}
                     >
-                        <Icon className="h-4 w-4" />
+                        {
+                            shortLabel
+                        }
                     </motion.a>
                 ),
             )}

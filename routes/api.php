@@ -9,12 +9,16 @@ use App\Http\Controllers\Api\Website\RegistrationController as WebsiteRegistrati
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Admin\TrainerController as AdminTrainerController;
 use App\Http\Controllers\Api\Website\TrainerController as WebsiteTrainerController;
+use App\Http\Controllers\Api\Website\TrainerPhotoController;
 
 Route::get(
     '/featured-workshop',
     FeaturedWorkshopController::class,
 );
-
+Route::get(
+    '/workshops/featured',
+    FeaturedWorkshopController::class,
+);
 
 
 Route::post(
@@ -29,6 +33,16 @@ Route::get(
     '/trainers',
     WebsiteTrainerController::class,
 );
+
+
+Route::get(
+    '/trainers/{trainer}/photo',
+    TrainerPhotoController::class,
+)
+    ->whereNumber('trainer')
+    ->name(
+        'website.trainers.photo',
+    );
 
 Route::prefix('admin')->group(
     function (): void {
@@ -111,6 +125,11 @@ Route::prefix('admin')->group(
             'trainers',
             AdminTrainerController::class,
         );
+
+        Route::apiResource(
+    'workshops',
+    WorkshopController::class,
+);
         });
     },
 );

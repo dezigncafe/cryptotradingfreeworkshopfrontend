@@ -1,7 +1,8 @@
 import {
-    Archive,
+   Archive,
     Copy,
     Edit3,
+    Eye,
     ImageIcon,
     Plus,
     Search,
@@ -196,6 +197,7 @@ export default function WorkshopIndex() {
 
                     Add Workshop
                 </Link>
+              
             </div>
 
             <div className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-[1fr_240px]">
@@ -277,10 +279,7 @@ export default function WorkshopIndex() {
                                         Date
                                     </th>
 
-                                    <th className="px-6 py-4">
-                                        Location
-                                    </th>
-
+                                  
                                     <th className="px-6 py-4">
                                         Capacity
                                     </th>
@@ -362,19 +361,8 @@ export default function WorkshopIndex() {
                                                 </p>
                                             </td>
 
-                                            <td className="px-6 py-4 text-sm text-slate-600">
-                                                <p className="font-bold">
-                                                    {
-                                                        workshop.city
-                                                    }
-                                                </p>
-
-                                                <p className="mt-1 text-xs">
-                                                    {
-                                                        workshop.venue
-                                                    }
-                                                </p>
-                                            </td>
+                                         
+                                          
 
                                             <td className="px-6 py-4 font-bold text-slate-700">
                                                 {
@@ -396,14 +384,26 @@ export default function WorkshopIndex() {
                                             </td>
 
                                             <td className="px-6 py-4">
-                                                <div className="flex justify-end gap-2">
-                                                    <Link
-                                                        to={`/admin/workshops/${workshop.id}/edit`}
-                                                        className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white"
-                                                        title="Edit"
-                                                    >
-                                                        <Edit3 className="h-4 w-4" />
-                                                    </Link>
+                                              
+                                                    <div className="flex justify-end gap-2">
+                                                        <Link
+                                                            to={`/admin/workshops/${workshop.id}`}
+                                                            className="grid h-9 w-9 place-items-center rounded-lg bg-purple-50 text-purple-600 transition hover:bg-purple-600 hover:text-white"
+                                                            title="View Workshop"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Link>
+
+                                                        <Link
+                                                            to={`/admin/workshops/${workshop.id}/edit`}
+                                                            className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit3 className="h-4 w-4" />
+                                                        </Link>
+
+                                                       
+                                                
 
                                                     <button
                                                         type="button"

@@ -21,6 +21,8 @@ import RegistrationIndex from './Pages/Admin/Registrations/Index';
 import TrainerIndex from './Pages/Admin/Trainers/Index';
 import TrainerForm from './Pages/Admin/Trainers/Form';
 
+import WorkshopShow from './Pages/Admin/Workshops/Show';
+
 export default function AppRouter() {
     return (
         <Routes>
@@ -62,6 +64,19 @@ export default function AppRouter() {
                     <Route
                         path="workshops/:id/edit"
                         element={<WorkshopForm />}
+                    />
+                    <Route
+                        path="workshops/:id"
+                        element={
+                            <WorkshopShow />
+                        }
+                    />
+
+                    <Route
+                        path="/admin/workshops/:id"
+                        element={
+                            <WorkshopShow />
+                        }
                     />
 
                     {/* Registration management */}

@@ -79,16 +79,17 @@ export default function Home() {
                 <BenefitsStrip />
                 <AboutSection />
                 <LearnSection />
-                <TrainersSection />
-                <MetricsSection />
-                <CommunitySection />
-
                 <RegistrationSection
                     workshop={workshop}
                     onRegistered={
                         loadWorkshop
                     }
                 />
+                <TrainersSection />
+                <MetricsSection />
+                <CommunitySection />
+
+                
 
                 <FaqSection />
                 <FinalCtaSection />

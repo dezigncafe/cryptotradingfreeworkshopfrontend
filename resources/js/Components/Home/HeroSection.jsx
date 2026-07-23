@@ -133,37 +133,6 @@ function BuildingIcon() {
     );
 }
 
-function UsersIcon() {
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="h-5 w-5"
-            aria-hidden="true"
-        >
-            <circle
-                cx="9"
-                cy="8"
-                r="3"
-            />
-
-            <circle
-                cx="17"
-                cy="9"
-                r="2.5"
-            />
-
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 20c0-4 2.5-7 6-7s6 3 6 7M15 14c3 0 5 2.5 5 6"
-            />
-        </svg>
-    );
-}
-
 function ArrowIcon() {
     return (
         <svg
@@ -206,21 +175,6 @@ function EventDetail({
 export default function HeroSection() {
     const reduceMotion = useReducedMotion();
 
-    const seatsRemaining = Math.max(
-        workshop.capacity -
-            workshop.registered,
-        0,
-    );
-
-    const registrationPercentage =
-        Math.min(
-            Math.round(
-                (workshop.registered /
-                    workshop.capacity) *
-                    100,
-            ),
-            100,
-        );
 
     return (
         <section
@@ -471,15 +425,16 @@ export default function HeroSection() {
                     </motion.div>
                 </motion.div>
 
-                {/* Seat availability card */}
+
+                {/* Animated presenter / workshop image */}
                 <motion.div
                     initial={
                         reduceMotion
                             ? false
                             : {
                                   opacity: 0,
-                                  x: 70,
-                                  scale: 0.94,
+                                  x: 90,
+                                  scale: 0.88,
                               }
                     }
                     animate={{
@@ -488,8 +443,8 @@ export default function HeroSection() {
                         scale: 1,
                     }}
                     transition={{
-                        duration: 0.8,
-                        delay: 0.45,
+                        duration: 0.9,
+                        delay: 0.35,
                         ease: [
                             0.22,
                             1,
@@ -497,221 +452,140 @@ export default function HeroSection() {
                             1,
                         ],
                     }}
-                    className="mx-auto w-full max-w-md lg:ml-auto"
+                    className="relative mx-auto flex min-h-[440px] w-full max-w-[540px] items-end justify-center lg:ml-auto lg:min-h-[570px]"
                 >
+                    {/* Soft animated glow behind image */}
                     <motion.div
+                        aria-hidden="true"
+                        className="absolute bottom-8 left-1/2 h-[330px] w-[330px] -translate-x-1/2 rounded-full bg-[#F5B400]/20 blur-3xl sm:h-[420px] sm:w-[420px]"
+                        animate={
+                            reduceMotion
+                                ? undefined
+                                : {
+                                      scale: [
+                                          1,
+                                          1.1,
+                                          1,
+                                      ],
+                                      opacity: [
+                                          0.55,
+                                          0.85,
+                                          0.55,
+                                      ],
+                                  }
+                        }
+                        transition={{
+                            duration: 4.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                        }}
+                    />
+
+                    {/* Decorative rotating ring */}
+                    <motion.div
+                        aria-hidden="true"
+                        className="absolute bottom-12 left-1/2 h-[300px] w-[300px] -translate-x-1/2 rounded-full border border-[#F5B400]/35 sm:h-[390px] sm:w-[390px]"
+                        animate={
+                            reduceMotion
+                                ? undefined
+                                : {
+                                      rotate: 360,
+                                  }
+                        }
+                        transition={{
+                            duration: 22,
+                            repeat: Infinity,
+                            ease: 'linear',
+                        }}
+                    >
+                        <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#F5B400] shadow-[0_0_22px_rgba(245,180,0,0.9)]" />
+
+                        <span className="absolute bottom-4 right-8 h-2.5 w-2.5 rounded-full bg-white/80 shadow-[0_0_18px_rgba(255,255,255,0.7)]" />
+                    </motion.div>
+
+                    {/* Main image */}
+                    <motion.img
+                        src="/images/workshop-presenter.png"
+                        alt={`${workshop.presenter} presenting the crypto trading workshop`}
+                        animate={
+                            reduceMotion
+                                ? undefined
+                                : {
+                                    y: [
+                                        0,
+                                        -14,
+                                        0,
+                                    ],
+                                }
+                        }
+                        transition={{
+                            duration: 4.2,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                        }}
                         whileHover={
                             reduceMotion
                                 ? undefined
                                 : {
-                                      y: -6,
+                                    scale: 1.025,
+                                }
+                        }
+                        className="relative z-10 h-auto w-[115%] max-w-none object-contain object-bottom drop-shadow-[0_30px_45px_rgba(0,0,0,0.42)] sm:w-[120%] lg:w-[135%]"
+                    />
+
+                    {/* Floating yellow accent */}
+                    <motion.div
+                        aria-hidden="true"
+                        className="absolute right-4 top-16 h-16 w-16 rounded-2xl border border-white/15 bg-[#F5B400]/90 shadow-[0_18px_45px_rgba(245,180,0,0.25)] backdrop-blur sm:right-8 sm:h-20 sm:w-20"
+                        animate={
+                            reduceMotion
+                                ? undefined
+                                : {
+                                      y: [
+                                          0,
+                                          12,
+                                          0,
+                                      ],
+                                      rotate: [
+                                          8,
+                                          -5,
+                                          8,
+                                      ],
                                   }
                         }
                         transition={{
-                            duration: 0.25,
+                            duration: 5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
                         }}
-                        className="rounded-3xl border border-white/20 bg-white p-6 text-slate-900 shadow-2xl sm:p-8"
-                    >
-                        <div className="text-center">
-                            <motion.span
-                                initial={
-                                    reduceMotion
-                                        ? false
-                                        : {
-                                              opacity: 0,
-                                              y: -12,
-                                          }
-                                }
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    delay: 0.75,
-                                    duration: 0.45,
-                                }}
-                                className="inline-flex rounded-lg bg-[#0B2C5D] px-5 py-2 text-xs font-black uppercase tracking-wide text-white"
-                            >
-                                Live Update
-                            </motion.span>
+                    />
 
-                            <p className="mt-5 text-sm font-bold text-slate-600">
-                                Seats Remaining
-                            </p>
-
-                            <div className="mt-1 flex items-end justify-center gap-3">
-                                <motion.span
-                                    initial={
-                                        reduceMotion
-                                            ? false
-                                            : {
-                                                  opacity: 0,
-                                                  scale: 0.4,
-                                              }
-                                    }
-                                    animate={{
-                                        opacity: 1,
-                                        scale: 1,
-                                    }}
-                                    transition={{
-                                        type: 'spring',
-                                        stiffness: 180,
-                                        damping: 14,
-                                        delay: 0.9,
-                                    }}
-                                    className="text-6xl font-black text-[#F5B400] sm:text-7xl"
-                                >
-                                    {seatsRemaining}
-                                </motion.span>
-
-                                <motion.span
-                                    initial={
-                                        reduceMotion
-                                            ? false
-                                            : {
-                                                  opacity: 0,
-                                                  x: 15,
-                                              }
-                                    }
-                                    animate={{
-                                        opacity: 1,
-                                        x: 0,
-                                    }}
-                                    transition={{
-                                        delay: 1.05,
-                                        duration: 0.5,
-                                    }}
-                                    className="pb-2 text-3xl font-black text-[#0B2C5D]"
-                                >
-                                    /{' '}
-                                    {
-                                        workshop.capacity
-                                    }
-                                </motion.span>
-                            </div>
-
-                            <motion.span
-                                animate={
-                                    reduceMotion
-                                        ? undefined
-                                        : {
-                                              scale: [
-                                                  1,
-                                                  1.04,
-                                                  1,
-                                              ],
-                                          }
-                                }
-                                transition={{
-                                    duration: 1.8,
-                                    repeat: Infinity,
-                                    ease: 'easeInOut',
-                                }}
-                                className="mt-5 inline-flex rounded-md bg-emerald-500 px-6 py-2 text-sm font-black uppercase text-white"
-                            >
-                                {
-                                    workshop.status
-                                }
-                            </motion.span>
-                        </div>
-
-                        <div className="my-7 h-px bg-slate-200" />
-
-                        <div>
-                            <div className="flex items-center justify-between text-sm font-bold">
-                                <span className="text-slate-600">
-                                    Capacity Progress
-                                </span>
-
-                                <motion.span
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                    }}
-                                    transition={{
-                                        delay: 1.2,
-                                    }}
-                                    className="text-[#0B2C5D]"
-                                >
-                                    {
-                                        registrationPercentage
-                                    }
-                                    %
-                                </motion.span>
-                            </div>
-
-                            <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-200">
-                                <motion.div
-                                    initial={{
-                                        width: 0,
-                                    }}
-                                    animate={{
-                                        width: `${registrationPercentage}%`,
-                                    }}
-                                    transition={{
-                                        duration: 1.2,
-                                        delay: 1,
-                                        ease: 'easeOut',
-                                    }}
-                                    className="h-full rounded-full bg-[#F5B400]"
-                                />
-                            </div>
-                        </div>
-
-                        <motion.div
-                            initial={
-                                reduceMotion
-                                    ? false
-                                    : {
-                                          opacity: 0,
-                                          y: 15,
-                                      }
-                            }
-                            animate={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            transition={{
-                                delay: 1.25,
-                                duration: 0.55,
-                            }}
-                            className="mt-7 flex flex-col gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-slate-600 sm:flex-row sm:items-center sm:justify-between"
-                        >
-                            <div className="flex items-center gap-2">
-                                <UsersIcon />
-
-                                <span>
-                                    {
-                                        workshop.capacity
-                                    }{' '}
-                                    Seats Available
-                                </span>
-                            </div>
-
-                            <motion.span
-                                animate={
-                                    reduceMotion
-                                        ? undefined
-                                        : {
-                                              opacity: [
-                                                  1,
-                                                  0.55,
-                                                  1,
-                                              ],
-                                          }
-                                }
-                                transition={{
-                                    duration: 1.6,
-                                    repeat: Infinity,
-                                }}
-                                className="text-red-600"
-                            >
-                                Limited Seats Only!
-                            </motion.span>
-                        </motion.div>
-                    </motion.div>
+                    {/* Floating blue accent */}
+                    <motion.div
+                        aria-hidden="true"
+                        className="absolute bottom-24 left-2 h-10 w-10 rounded-full border border-white/20 bg-blue-400/30 shadow-[0_0_30px_rgba(96,165,250,0.45)] backdrop-blur sm:left-8 sm:h-14 sm:w-14"
+                        animate={
+                            reduceMotion
+                                ? undefined
+                                : {
+                                      x: [
+                                          0,
+                                          12,
+                                          0,
+                                      ],
+                                      y: [
+                                          0,
+                                          -10,
+                                          0,
+                                      ],
+                                  }
+                        }
+                        transition={{
+                            duration: 4.8,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                        }}
+                    />
                 </motion.div>
             </div>
         </section>

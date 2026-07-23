@@ -15,54 +15,25 @@ class AdminAuthController extends Controller
     /**
      * Log in an administrator.
      */
-    public function login(
-        Request $request,
-    ): JsonResponse {
-        $validated =
-            $request->validate([
-                'email' => [
-                    'required',
-                    'string',
-                    'email',
-                    'max:255',
-                ],
-
-                'password' => [
-                    'required',
-                    'string',
-                ],
-            ]);
-
+    public function login(Request $request,): JsonResponse {
+        $validated = $request->validate(['email' => ['required','string','email','max:255',],
+                                        'password' => ['required','string',]]);
         /*
          * Remove spaces and make the
          * submitted email lowercase.
          */
-        $email = Str::lower(
-            trim(
-                $validated['email'],
-            ),
-        );
+        $email = Str::lower(trim($validated['email'],),);
 
         /*
          * Find the account without
          * depending on email case.
          */
-        $user = User::query()
-            ->whereRaw(
-                'LOWER(email) = ?',
-                [$email],
-            )
-            ->first();
+        $user = User::query()->whereRaw('LOWER(email) = ?',[$email],)->first();
 
         /*
          * Check account and password.
          */
-        if (
-            ! $user ||
-            ! Hash::check(
-                $validated['password'],
-                $user->password,
-            )
+        if (! $user || ! Hash::check($validated['password'], $user->password,)
         ) {
             throw ValidationException::withMessages([
                 'email' => [
@@ -74,9 +45,7 @@ class AdminAuthController extends Controller
         /*
          * Only admin users can log in.
          */
-        if (
-            (string) $user->role !==
-            'admin'
+        if ((string) $user->role !=='admin'
         ) {
             throw ValidationException::withMessages([
                 'email' => [
@@ -89,9 +58,7 @@ class AdminAuthController extends Controller
          * Prevent inactive administrators
          * from logging in.
          */
-        if (
-            ! (bool) $user->is_active
-        ) {
+        if (! (bool) $user->is_active) {
             throw ValidationException::withMessages([
                 'email' => [
                     'This administrator account is inactive.',
@@ -103,71 +70,39 @@ class AdminAuthController extends Controller
          * Create a Laravel Passport
          * personal access token.
          */
-        $accessToken = $user
-            ->createToken(
-                'admin-dashboard',
-            )
-            ->accessToken;
+        $accessToken = $user->createToken('admin-dashboard',)->accessToken;
 
-        return response()->json([
-            'message' =>
-                'Admin login successful.',
-
-            'token_type' =>
-                'Bearer',
-
-            'access_token' =>
-                $accessToken,
-
-            'user' => [
-                'id' =>
-                    $user->id,
-
-                'name' =>
-                    $user->name,
-
-                'email' =>
-                    $user->email,
-
-                'role' =>
-                    $user->role,
-
-                'is_active' =>
-                    (bool) $user
-                        ->is_active,
-            ],
-        ]);
-    }
-
-    /**
-     * Return the authenticated admin.
-     */
-    public function me(
-        Request $request,
-    ): JsonResponse {
-        return response()->json([
-            'user' =>
-                $request->user(),
-        ]);
-    }
-
-    /**
-     * Log out and revoke the current token.
-     */
-    public function logout(
-        Request $request,
-    ): JsonResponse {
-        $token = $request
-            ->user()
-            ?->token();
-
-        if ($token) {
-            $token->revoke();
+        return response()->json(['message' => 'Admin login successful.',
+                                'token_type' => 'Bearer',
+                                'access_token' => $accessToken,
+                                'user' => [
+                                    'id' => $user->id,
+                                    'name' => $user->name,
+                                    'email' => $user->email,
+                                    'role' => $user->role,
+                                    'is_active' => (bool) $user->is_active,
+                                    ],
+                            ]);
         }
 
-        return response()->json([
-            'message' =>
-                'Logged out successfully.',
-        ]);
-    }
+        /**
+         * Return the authenticated admin.
+         */
+        public function me(Request $request,): JsonResponse {
+            return response()->json(['user' =>$request->user(),]);
+        }
+
+        /**
+         * Log out and revoke the current token.
+         */
+        public function logout(Request $request,): JsonResponse {
+            $token = $request->user()?->token();
+
+            if ($token) {$token->revoke();}
+
+            return response()->json([
+                'message' =>
+                    'Logged out successfully.',
+            ]);
+        }
 }

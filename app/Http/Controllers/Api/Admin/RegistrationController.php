@@ -15,122 +15,51 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RegistrationController extends Controller
 {
-    private const STATUSES = [
-        'confirmed',
-        'waitlist',
-        'cancelled',
-        'rejected',
-    ];
+    private const STATUSES = ['confirmed','waitlist','cancelled','rejected',];
 
     /**
      * Display registrations.
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->validate([
-            'search' => [
-                'nullable',
-                'string',
-                'max:255',
-            ],
+        $filters = $request->validate(['search' => ['nullable','string','max:255',],
+                                        'status' => ['nullable',Rule::in(self::STATUSES),],
+                                        'workshop_id' => ['nullable','integer','exists:workshops,id',],
+                                        'page' => ['nullable','integer','min:1',],
+                                    ]);
 
-            'status' => [
-                'nullable',
-                Rule::in(self::STATUSES),
-            ],
-
-            'workshop_id' => [
-                'nullable',
-                'integer',
-                'exists:workshops,id',
-            ],
-
-            'page' => [
-                'nullable',
-                'integer',
-                'min:1',
-            ],
-        ]);
-
-        $query = Registration::query()
-            ->with([
-                'workshop' => function ($query): void {
-                    $query->select([
-                        'id',
-                        'title',
-                        'workshop_date',
-                        'venue',
-                        'city',
-                        'capacity',
-                        'status',
-                    ]);
+        $query = Registration::query()->with(['workshop' => function ($query): void {
+                    $query->select(['id','title','workshop_date','venue','city','capacity','status',]);
                 },
             ])
             ->latest('id');
-
         $this->applyFilters($query, $filters);
-
-        $paginator = $query
-            ->paginate(15)
-            ->withQueryString();
-
+        $paginator = $query->paginate(15)->withQueryString();
         $summaryQuery = Registration::query();
-
         if (! empty($filters['workshop_id'])) {
-            $summaryQuery->where(
-                'workshop_id',
-                $filters['workshop_id'],
-            );
+            $summaryQuery->where('workshop_id',$filters['workshop_id'],);
         }
-
         $summary = [
             'total' => (clone $summaryQuery)->count(),
-
-            'confirmed' => (clone $summaryQuery)
-                ->where('status', 'confirmed')
-                ->count(),
-
-            'waitlist' => (clone $summaryQuery)
-                ->where('status', 'waitlist')
-                ->count(),
-
-            'cancelled' => (clone $summaryQuery)
-                ->where('status', 'cancelled')
-                ->count(),
-
-            'rejected' => (clone $summaryQuery)
-                ->where('status', 'rejected')
-                ->count(),
+            'confirmed' => (clone $summaryQuery)->where('status', 'confirmed')->count(),
+            'waitlist' => (clone $summaryQuery)->where('status', 'waitlist')->count(),
+            'cancelled' => (clone $summaryQuery)->where('status', 'cancelled')->count(),
+            'rejected' => (clone $summaryQuery)->where('status', 'rejected')->count(),
         ];
 
-        $workshops = Workshop::withTrashed()
-            ->orderByDesc('workshop_date')
-            ->get([
-                'id',
-                'title',
-                'workshop_date',
-                'status',
-                'deleted_at',
-            ])
-            ->map(function (Workshop $workshop): array {
-                return [
-                    'id' => $workshop->id,
+        $workshops = Workshop::withTrashed()->orderByDesc('workshop_date')->get(['id','title','workshop_date','status','deleted_at', ])
+                                ->map(function (Workshop $workshop): array {
+                                    return [
+                                        'id' => $workshop->id,
+                                        'title' => $workshop->title,
+                                        'date' => $workshop->workshop_date?->format('Y-m-d'),
+                                        'status' => $workshop->status,
+                                        'trashed' => $workshop->trashed(),
+                                    ];
+                                })
+                                ->values();
 
-                    'title' => $workshop->title,
-
-                    'date' => $workshop
-                        ->workshop_date
-                        ?->format('Y-m-d'),
-
-                    'status' => $workshop->status,
-
-                    'trashed' => $workshop->trashed(),
-                ];
-            })
-            ->values();
-
-        return response()->json([
-            'data' => collect($paginator->items())
+        return response()->json(['data' => collect($paginator->items())
                 ->map(
                     fn (Registration $registration): array =>
                         $this->transform($registration),
@@ -138,27 +67,19 @@ class RegistrationController extends Controller
                 ->values(),
 
             'summary' => $summary,
-
             'workshops' => $workshops,
-
             'statuses' => self::STATUSES,
-
             'meta' => [
                 'current_page' =>
                     $paginator->currentPage(),
-
                 'last_page' =>
                     $paginator->lastPage(),
-
                 'per_page' =>
                     $paginator->perPage(),
-
                 'total' =>
                     $paginator->total(),
-
                 'from' =>
                     $paginator->firstItem(),
-
                 'to' =>
                     $paginator->lastItem(),
             ],
@@ -168,87 +89,39 @@ class RegistrationController extends Controller
     /**
      * Display one registration.
      */
-    public function show(
-        Registration $registration,
-    ): JsonResponse {
+    public function show(Registration $registration,): JsonResponse {
         $registration->load('workshop');
-
         return response()->json([
-            'data' =>
-                $this->transform($registration),
+            'data' => $this->transform($registration),
         ]);
     }
 
     /**
      * Change registration status.
      */
-    public function updateStatus(
-        Request $request,
-        Registration $registration,
-    ): JsonResponse {
-        $validated = $request->validate([
-            'status' => [
-                'required',
-                Rule::in(self::STATUSES),
-            ],
-        ]);
-
+    public function updateStatus(Request $request,Registration $registration,): JsonResponse {
+        $validated = $request->validate(['status' => ['required',Rule::in(self::STATUSES),],]);
         $updatedRegistration = DB::transaction(
-            function () use (
-                $registration,
-                $validated,
-            ): Registration {
-                $lockedRegistration =
-                    Registration::query()
-                        ->lockForUpdate()
-                        ->findOrFail(
-                            $registration->id,
-                        );
-
-                $workshop = Workshop::withTrashed()
-                    ->lockForUpdate()
-                    ->findOrFail(
-                        $lockedRegistration
-                            ->workshop_id,
-                    );
-
-                $newStatus =
-                    $validated['status'];
-
+            function () use ($registration,$validated,): Registration {
+                $lockedRegistration = Registration::query()->lockForUpdate()->findOrFail($registration->id,);
+                $workshop = Workshop::withTrashed()->lockForUpdate()->findOrFail($lockedRegistration->workshop_id,);
+                $newStatus = $validated['status'];
                 /*
                  * Before confirming a waitlisted or
                  * cancelled registration, check capacity.
                  */
-                if (
-                    $newStatus === 'confirmed'
-                    && $lockedRegistration->status
-                        !== 'confirmed'
-                ) {
-                    $confirmedCount =
-                        Registration::query()
-                            ->where(
-                                'workshop_id',
-                                $workshop->id,
-                            )
-                            ->where(
-                                'status',
-                                'confirmed',
-                            )
+                if ($newStatus === 'confirmed' && $lockedRegistration->status !== 'confirmed') {
+                    $confirmedCount = Registration::query()->where('workshop_id',$workshop->id,)
+                            ->where('status','confirmed',)
                             ->count();
-
-                    if (
-                        $confirmedCount
-                        >= $workshop->capacity
-                    ) {
+                    if ($confirmedCount >= $workshop->capacity ) {
                         throw ValidationException::
-                            withMessages([
-                                'status' => [
+                            withMessages([                                'status' => [
                                     'This workshop is full. Remove or cancel another confirmed registration before confirming this participant.',
                                 ],
                             ]);
                     }
                 }
-
                 $lockedRegistration->update([
                     'status' => $newStatus,
                 ]);
@@ -256,22 +129,8 @@ class RegistrationController extends Controller
                 /*
                  * Recalculate available seats.
                  */
-                $confirmedCount =
-                    Registration::query()
-                        ->where(
-                            'workshop_id',
-                            $workshop->id,
-                        )
-                        ->where(
-                            'status',
-                            'confirmed',
-                        )
-                        ->count();
-
-                if (
-                    ! $workshop->trashed()
-                    && in_array(
-                        $workshop->status,
+                $confirmedCount = Registration::query()->where('workshop_id', $workshop->id,)->where('status','confirmed',)->count();
+                if (! $workshop->trashed() && in_array($workshop->status,
                         [
                             'registration_open',
                             'full',

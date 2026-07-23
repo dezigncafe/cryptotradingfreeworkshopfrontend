@@ -9,48 +9,53 @@ import AdminProtectedRoute from './Routes/AdminProtectedRoute';
 
 import Home from './Pages/Home';
 
-import AdminDashboard from './Pages/Admin/Dashboard';
 import AdminLogin from './Pages/Admin/Login';
 import PlaceholderPage from './Pages/Admin/PlaceholderPage';
 
 import WorkshopIndex from './Pages/Admin/Workshops/Index';
 import WorkshopForm from './Pages/Admin/Workshops/Form';
+import WorkshopShow from './Pages/Admin/Workshops/Show';
 
 import RegistrationIndex from './Pages/Admin/Registrations/Index';
 
 import TrainerIndex from './Pages/Admin/Trainers/Index';
 import TrainerForm from './Pages/Admin/Trainers/Form';
 
-import WorkshopShow from './Pages/Admin/Workshops/Show';
+import AdminDashboard from './Pages/Admin/Dashboard/Index';
 
 export default function AppRouter() {
     return (
         <Routes>
-            {/* Public website */}
             <Route
                 path="/"
                 element={<Home />}
             />
 
-            {/* Admin login */}
             <Route
                 path="/admin/login"
                 element={<AdminLogin />}
             />
 
-            {/* Protected admin routes */}
             <Route element={<AdminProtectedRoute />}>
                 <Route
                     path="/admin"
                     element={<AdminLayout />}
                 >
-                    {/* Dashboard */}
                     <Route
                         index
+                        element={
+                            <Navigate
+                                to="dashboard"
+                                replace
+                            />
+                        }
+                    />
+
+                    <Route
+                        path="dashboard"
                         element={<AdminDashboard />}
                     />
 
-                    {/* Workshop management */}
                     <Route
                         path="workshops"
                         element={<WorkshopIndex />}
@@ -65,27 +70,17 @@ export default function AppRouter() {
                         path="workshops/:id/edit"
                         element={<WorkshopForm />}
                     />
+
                     <Route
                         path="workshops/:id"
-                        element={
-                            <WorkshopShow />
-                        }
+                        element={<WorkshopShow />}
                     />
 
-                    <Route
-                        path="/admin/workshops/:id"
-                        element={
-                            <WorkshopShow />
-                        }
-                    />
-
-                    {/* Registration management */}
                     <Route
                         path="registrations"
                         element={<RegistrationIndex />}
                     />
 
-                    {/* Trainer management */}
                     <Route
                         path="trainers"
                         element={<TrainerIndex />}
@@ -101,7 +96,6 @@ export default function AppRouter() {
                         element={<TrainerForm />}
                     />
 
-                    {/* FAQ management */}
                     <Route
                         path="faqs"
                         element={
@@ -112,7 +106,6 @@ export default function AppRouter() {
                         }
                     />
 
-                    {/* Attendance management */}
                     <Route
                         path="attendance"
                         element={
@@ -123,7 +116,6 @@ export default function AppRouter() {
                         }
                     />
 
-                    {/* SMS log management */}
                     <Route
                         path="sms-logs"
                         element={
@@ -134,7 +126,6 @@ export default function AppRouter() {
                         }
                     />
 
-                    {/* Site settings */}
                     <Route
                         path="settings"
                         element={
@@ -145,12 +136,11 @@ export default function AppRouter() {
                         }
                     />
 
-                    {/* Invalid admin route */}
                     <Route
                         path="*"
                         element={
                             <Navigate
-                                to="/admin"
+                                to="dashboard"
                                 replace
                             />
                         }
@@ -158,7 +148,6 @@ export default function AppRouter() {
                 </Route>
             </Route>
 
-            {/* Invalid public route */}
             <Route
                 path="*"
                 element={

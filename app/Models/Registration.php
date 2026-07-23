@@ -87,4 +87,6 @@ class Registration extends Model
             'workshop_location_id',
         );
     }
+
+   
 }
